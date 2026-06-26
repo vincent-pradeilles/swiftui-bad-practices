@@ -6,6 +6,10 @@
 	objectVersion = 90;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BF8BE72A2FEEA1CF0088B5DC /* Splash in Frameworks */ = {isa = PBXBuildFile; productRef = BF8BE7292FEEA1CF0088B5DC /* Splash */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* SwiftUIBadPractices.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUIBadPractices.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -22,6 +26,7 @@
 		000000000000000130000000 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				BF8BE72A2FEEA1CF0088B5DC /* Splash in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -60,6 +65,9 @@
 				000000000000000000000010 /* SwiftUIBadPractices */,
 			);
 			name = SwiftUIBadPractices;
+			packageProductDependencies = (
+				BF8BE7292FEEA1CF0088B5DC /* Splash */,
+			);
 			productName = MyApp;
 			productReference = 000000000000000000000120 /* SwiftUIBadPractices.app */;
 			productType = "com.apple.product-type.application";
@@ -88,6 +96,9 @@
 			);
 			mainGroup = 000000000000000000000001;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BF8BE7282FEEA1CF0088B5DC /* XCRemoteSwiftPackageReference "Splash" */,
+			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 000000000000000000000020 /* Products */;
 			projectDirPath = "";
@@ -341,6 +352,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BF8BE7282FEEA1CF0088B5DC /* XCRemoteSwiftPackageReference "Splash" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JohnSundell/Splash";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.16.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BF8BE7292FEEA1CF0088B5DC /* Splash */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BF8BE7282FEEA1CF0088B5DC /* XCRemoteSwiftPackageReference "Splash" */;
+			productName = Splash;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 000000000000000000000000 /* Project object */;
 }

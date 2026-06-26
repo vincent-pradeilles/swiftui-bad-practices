@@ -1,4 +1,5 @@
 import SwiftUI
+import Splash
 
 /// Reusable layout for a single lesson.
 ///
@@ -42,7 +43,7 @@ struct LessonPage<AvoidDemo: View, PreferDemo: View>: View {
 
                 LessonExample(
                     label: "Avoid",
-                    tint: .red,
+                    tint: .avoid,
                     systemImage: "xmark.octagon.fill",
                     code: avoidCode,
                     showsDemo: showsDemos
@@ -52,7 +53,7 @@ struct LessonPage<AvoidDemo: View, PreferDemo: View>: View {
 
                 LessonExample(
                     label: "Prefer",
-                    tint: .green,
+                    tint: .prefer,
                     systemImage: "checkmark.seal.fill",
                     code: preferCode,
                     showsDemo: showsDemos
@@ -91,7 +92,8 @@ extension LessonPage where AvoidDemo == EmptyView, PreferDemo == EmptyView {
 /// One labeled example: a code snippet, optionally followed by a live demo.
 private struct LessonExample<Demo: View>: View {
     let label: String
-    let tint: Color
+    // `import Splash` also exports a `Color` typealias, so qualify SwiftUI's.
+    let tint: SwiftUI.Color
     let systemImage: String
     let code: String
     let showsDemo: Bool
@@ -119,14 +121,69 @@ private struct LessonExample<Demo: View>: View {
 }
 
 private struct CodeBlock: View {
-    let code: String
+    /// Swift code rendered with Splash syntax highlighting.
+    ///
+    /// Splash's bundled themes are tuned for dark editors, so the snippet
+    /// keeps a dark background in both light and dark mode for legible,
+    /// consistent coloring.
+    private let highlighted: AttributedString
+
+    init(code: String) {
+        self.highlighted = Self.highlight(code)
+    }
 
     var body: some View {
-        Text(code)
-            .font(.system(.body, design: .monospaced))
+        Text(highlighted)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
-            .background(Color.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+            .background(SwiftUI.Color(white: 0.12), in: RoundedRectangle(cornerRadius: 8))
             .textSelection(.enabled)
     }
+
+    // Splash builds the highlighter once; reusing it avoids re-parsing the
+    // theme for every snippet on screen. The Menlo font (baked in by the
+    // theme) is carried through into the AttributedString.
+    private static let highlighter = SyntaxHighlighter(
+        format: AttributedStringOutputFormat(theme: theme)
+    )
+
+    private static func highlight(_ code: String) -> AttributedString {
+        AttributedString(highlighter.highlight(code))
+    }
+
+    /// Colors modeled on Xcode's "Midnight" dark theme — vibrant and
+    /// readable, but a step down from Splash's neon bundled themes.
+    private static let theme = Theme(
+        font: Splash.Font(size: 15),
+        plainTextColor: rgb(0xFFFFFF),
+        tokenColors: [
+            .keyword: rgb(0xFF7AB2),       // pink
+            .string: rgb(0xFF8170),        // coral
+            .type: rgb(0x9EF1DD),          // mint
+            .call: rgb(0x67B7A4),          // teal
+            .number: rgb(0xD9C97C),        // gold
+            .comment: rgb(0x7F8C98),       // slate gray
+            .property: rgb(0xACF2E4),      // pale mint
+            .dotAccess: rgb(0x67B7A4),     // teal (match calls)
+            .preprocessing: rgb(0xFFA14F)  // orange
+        ],
+        backgroundColor: rgb(0x292A30)
+    )
+
+    /// Builds a Splash color from a 0xRRGGBB hex value.
+    private static func rgb(_ hex: UInt32) -> Splash.Color {
+        Splash.Color(
+            red: CGFloat((hex >> 16) & 0xFF) / 255,
+            green: CGFloat((hex >> 8) & 0xFF) / 255,
+            blue: CGFloat(hex & 0xFF) / 255,
+            alpha: 1
+        )
+    }
+}
+
+private extension SwiftUI.Color {
+    /// Muted tints for the "Avoid"/"Prefer" cards — softer than the full
+    /// system red/green so they sit calmly next to the code blocks.
+    static let avoid = SwiftUI.Color(red: 0.80, green: 0.33, blue: 0.31)
+    static let prefer = SwiftUI.Color(red: 0.31, green: 0.62, blue: 0.43)
 }
