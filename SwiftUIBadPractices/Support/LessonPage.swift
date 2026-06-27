@@ -148,7 +148,13 @@ private struct CodeBlock: View {
     )
 
     private static func highlight(_ code: String) -> AttributedString {
-        AttributedString(highlighter.highlight(code))
+        var highlighted = AttributedString(highlighter.highlight(code))
+        // Splash bakes in a platform font (Menlo on iOS), but no monospaced
+        // font resolves on macOS, where it falls back to the proportional
+        // system font. Override it with a SwiftUI monospaced font so the
+        // snippet renders identically on every platform.
+        highlighted.font = .system(size: 15, design: .monospaced)
+        return highlighted
     }
 
     /// Colors modeled on Xcode's "Midnight" dark theme — vibrant and
