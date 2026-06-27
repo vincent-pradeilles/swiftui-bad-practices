@@ -59,7 +59,7 @@ struct IndicesIdentityLesson: View {
             title: "Indices as Identity",
             explanation: """
             ForEach uses identity to match rows across updates. An index \
-            describes a position, not an element — insert or reorder and the same \
+            describes a position, not an element. Insert or reorder and the same \
             index points to a different element, so row @State, focus, and \
             animations break. Star a row below, then insert at the top: with \
             indices the star jumps; with element identity it follows its row.

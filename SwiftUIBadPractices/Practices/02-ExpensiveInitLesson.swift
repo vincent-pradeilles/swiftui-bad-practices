@@ -5,7 +5,7 @@ struct ExpensiveInitLesson: View {
         LessonPage(
             title: "View init",
             explanation: """
-            A view's init runs every time its parent's body runs — many times \
+            A view's init runs every time its parent's body runs, many times \
             per second inside lists and animations. Treat init as a cheap copy \
             of inputs: don't decode, format dates, or touch the file system there. \
             Pass prepared values and let SwiftUI format with Text(_:format:).

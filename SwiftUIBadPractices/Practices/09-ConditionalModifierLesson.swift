@@ -4,7 +4,7 @@ import SwiftUI
 
 /// Branching between `transform(self)` and `self` produces two different
 /// view types. Toggling the condition swaps one for the other, destroying
-/// structural identity — so descendant @State is reset.
+/// structural identity, so descendant @State is reset.
 private extension View {
     @ViewBuilder
     func `if`<Transformed: View>(
@@ -68,7 +68,7 @@ struct ConditionalModifierLesson: View {
             A conditional `.if` modifier switches between two view types, so \
             toggling the condition breaks structural identity: descendant @State \
             resets and animations become abrupt replacements. Type into each \
-            field below, then flip the toggle — the Avoid field loses its text. \
+            field below, then flip the toggle, and the Avoid field loses its text. \
             Apply the value conditionally with a ternary instead.
             """,
             avoidCode: """

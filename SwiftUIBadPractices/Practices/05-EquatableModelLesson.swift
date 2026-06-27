@@ -6,7 +6,7 @@ struct EquatableModelLesson: View {
             title: "Equatable Models",
             explanation: """
             The @Observable macro generates a setter that skips invalidation \
-            when the new value equals the current one — but only if the type is \
+            when the new value equals the current one, but only if the type is \
             Equatable. Without that conformance, every assignment notifies \
             observers, even when the value is identical. Conforming the property \
             type to Equatable is a free win for frequently-written values.
