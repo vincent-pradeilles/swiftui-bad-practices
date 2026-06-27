@@ -1,6 +1,11 @@
 import SwiftUI
 import Splash
 
+#if os(macOS)
+import AppKit
+import UniformTypeIdentifiers
+#endif
+
 /// Reusable layout for a single lesson.
 ///
 /// Every lesson shows a short explanation, then two examples: the
@@ -37,37 +42,94 @@ struct LessonPage<AvoidDemo: View, PreferDemo: View>: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text(explanation)
-                    .font(.title3)
-
-                LessonExample(
-                    label: "Avoid",
-                    tint: .avoid,
-                    systemImage: "xmark.octagon.fill",
-                    code: avoidCode,
-                    showsDemo: showsDemos
-                ) {
-                    avoidDemo
-                }
-
-                LessonExample(
-                    label: "Prefer",
-                    tint: .prefer,
-                    systemImage: "checkmark.seal.fill",
-                    code: preferCode,
-                    showsDemo: showsDemos
-                ) {
-                    preferDemo
-                }
-            }
-            // Match the navigation bar's large-title leading inset (20pt on
-            // iPad) so the body and cards align with the title.
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            lessonContent
+                // Match the navigation bar's large-title leading inset (20pt
+                // on iPad) so the body and cards align with the title.
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
         }
         .navigationTitle(title)
+        #if os(macOS)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Export Image", systemImage: "square.and.arrow.up") {
+                    exportImage()
+                }
+            }
+        }
+        #endif
     }
+
+    /// The visible body of a lesson: the explanation followed by the two
+    /// example cards. Shared by the on-screen view and the image export so
+    /// the exported image matches exactly what's rendered on screen.
+    private var lessonContent: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            Text(explanation)
+                .font(.title3)
+
+            LessonExample(
+                label: "Avoid",
+                tint: .avoid,
+                systemImage: "xmark.octagon.fill",
+                code: avoidCode,
+                showsDemo: showsDemos
+            ) {
+                avoidDemo
+            }
+
+            LessonExample(
+                label: "Prefer",
+                tint: .prefer,
+                systemImage: "checkmark.seal.fill",
+                code: preferCode,
+                showsDemo: showsDemos
+            ) {
+                preferDemo
+            }
+        }
+    }
+
+    #if os(macOS)
+    /// The lesson laid out for export: the title above the same content
+    /// shown on screen, on a light background at a fixed width. Pinned to the
+    /// light color scheme so the image looks the same no matter the app's
+    /// current appearance.
+    private var exportContent: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            Text(title)
+                .font(.largeTitle.weight(.bold))
+
+            lessonContent
+        }
+        .padding(24)
+        .frame(width: 760, alignment: .leading)
+        .background(Color(white: 0.95))
+        .environment(\.colorScheme, .light)
+    }
+
+    /// Renders `exportContent` to a PNG at 2x and prompts for a save location.
+    @MainActor
+    private func exportImage() {
+        let renderer = ImageRenderer(content: exportContent)
+        renderer.scale = 2
+
+        guard
+            let image = renderer.nsImage,
+            let tiff = image.tiffRepresentation,
+            let bitmap = NSBitmapImageRep(data: tiff),
+            let png = bitmap.representation(using: .png, properties: [:])
+        else { return }
+
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [.png]
+        panel.nameFieldStringValue = "\(title).png"
+        panel.canCreateDirectories = true
+
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        try? png.write(to: url)
+    }
+    #endif
 }
 
 extension LessonPage where AvoidDemo == EmptyView, PreferDemo == EmptyView {
