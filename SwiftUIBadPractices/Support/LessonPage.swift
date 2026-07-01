@@ -196,6 +196,11 @@ private struct CodeBlock: View {
 
     var body: some View {
         Text(highlighted)
+            // Let the text grow to its full height at the final width so it
+            // never truncates. Without this, ImageRenderer measures each line
+            // unwrapped, then truncates the last line when a long line wraps
+            // at the fixed export width.
+            .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
             .background(SwiftUI.Color(white: 0.12), in: RoundedRectangle(cornerRadius: 8))

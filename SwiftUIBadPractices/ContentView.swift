@@ -22,20 +22,22 @@ enum Lesson: Identifiable, Hashable, CaseIterable {
 
     var id: Self { self }
 
+    /// The sidebar label, taken from each lesson's own `LessonPage` title so
+    /// the menu and the page it opens always show the same text.
     var title: String {
         switch self {
-        case .viewSections: "Sections as computed properties"
-        case .expensiveInit: "Expensive work in init"
-        case .singleChildGroup: "Single-child Group"
-        case .narrowInputs: "Passing whole structs"
-        case .equatableModel: "Non-Equatable model properties"
-        case .closureBinding: "Closure bindings"
-        case .closureEnvironment: "Closures in the environment"
-        case .unstableDefault: "Unstable environment defaults"
-        case .conditionalModifier: "Conditional view modifiers"
-        case .indicesIdentity: "Indices as identity"
-        case .inlineSortFilter: "Inline sort & filter"
-        case .anyViewRow: "AnyView rows"
+        case .viewSections: ViewSectionsLesson.title
+        case .expensiveInit: ExpensiveInitLesson.title
+        case .singleChildGroup: SingleChildGroupLesson.title
+        case .narrowInputs: NarrowInputsLesson.title
+        case .equatableModel: EquatableModelLesson.title
+        case .closureBinding: ClosureBindingLesson.title
+        case .closureEnvironment: ClosureEnvironmentLesson.title
+        case .unstableDefault: UnstableDefaultLesson.title
+        case .conditionalModifier: ConditionalModifierLesson.title
+        case .indicesIdentity: IndicesIdentityLesson.title
+        case .inlineSortFilter: InlineSortFilterLesson.title
+        case .anyViewRow: AnyViewRowLesson.title
         }
     }
 

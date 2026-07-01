@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct EquatableModelLesson: View {
+    static let title = "Equatable Models"
+
     var body: some View {
         LessonPage(
-            title: "Equatable Models",
+            title: Self.title,
             explanation: """
             The @Observable macro generates a setter that skips invalidation \
             when the new value equals the current one, but only if the type is \

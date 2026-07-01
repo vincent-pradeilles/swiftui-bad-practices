@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct ClosureEnvironmentLesson: View {
+    static let title = "Closures in Environment"
+
     var body: some View {
         LessonPage(
-            title: "Closures in Environment",
+            title: Self.title,
             explanation: """
             Never store closures in your own environment keys. SwiftUI can't \
             compare function values, so every reader in the subtree invalidates \

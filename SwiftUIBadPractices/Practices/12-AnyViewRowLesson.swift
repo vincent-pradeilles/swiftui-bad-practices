@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct AnyViewRowLesson: View {
+    static let title = "AnyView Rows"
+
     var body: some View {
         LessonPage(
-            title: "AnyView Rows",
+            title: Self.title,
             explanation: """
             AnyView erases a view's type, and with it the structural identity List \
             relies on to template row ids from the type alone. The List then has \

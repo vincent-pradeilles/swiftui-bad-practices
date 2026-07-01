@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct InlineSortFilterLesson: View {
+    static let title = "Inline Sort & Filter"
+
     var body: some View {
         LessonPage(
-            title: "Inline Sort & Filter",
+            title: Self.title,
             explanation: """
             The collection passed to ForEach is rebuilt every time the enclosing \
             body runs. Sorting or filtering inline repeats that work on every \

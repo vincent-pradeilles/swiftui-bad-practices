@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct UnstableDefaultLesson: View {
+    static let title = "Unstable Defaults"
+
     var body: some View {
         LessonPage(
-            title: "Unstable Defaults",
+            title: Self.title,
             explanation: """
             @Entry wraps its default in a computed getter, so `@Entry var theme = \
             Theme()` allocates a new instance on every fallback read. Any \

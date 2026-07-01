@@ -54,9 +54,11 @@ private struct GoodIdentityList: View {
 // MARK: - Lesson
 
 struct IndicesIdentityLesson: View {
+    static let title = "Indices as Identity"
+
     var body: some View {
         LessonPage(
-            title: "Indices as Identity",
+            title: Self.title,
             explanation: """
             ForEach uses identity to match rows across updates. An index \
             describes a position, not an element. Insert or reorder and the same \

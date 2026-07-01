@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct ExpensiveInitLesson: View {
+    static let title = "View init"
+
     var body: some View {
         LessonPage(
-            title: "View init",
+            title: Self.title,
             explanation: """
             A view's init runs every time its parent's body runs, many times \
             per second inside lists and animations. Treat init as a cheap copy \

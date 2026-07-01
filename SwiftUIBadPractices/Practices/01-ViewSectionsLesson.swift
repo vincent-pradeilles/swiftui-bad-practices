@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct ViewSectionsLesson: View {
+    static let title = "Splitting Large Views"
+
     var body: some View {
         LessonPage(
-            title: "Splitting Large Views",
+            title: Self.title,
             explanation: """
             Splitting a body into computed properties looks like efficient factoring, \
             but they all still share their View's invalidation boundary. So every state \

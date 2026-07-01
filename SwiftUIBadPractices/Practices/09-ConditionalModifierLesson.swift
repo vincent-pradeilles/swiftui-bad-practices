@@ -61,9 +61,11 @@ private struct GoodConditional: View {
 // MARK: - Lesson
 
 struct ConditionalModifierLesson: View {
+    static let title = "Conditional Modifiers"
+
     var body: some View {
         LessonPage(
-            title: "Conditional Modifiers",
+            title: Self.title,
             explanation: """
             A conditional `.if` modifier switches between two view types, so \
             toggling the condition breaks structural identity: descendant @State \

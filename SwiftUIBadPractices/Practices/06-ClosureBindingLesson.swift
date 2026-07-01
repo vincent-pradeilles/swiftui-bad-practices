@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct ClosureBindingLesson: View {
+    static let title = "Closure Bindings"
+
     var body: some View {
         LessonPage(
-            title: "Closure Bindings",
+            title: Self.title,
             explanation: """
             A get/set closure Binding is a fresh heap allocation on every body \
             evaluation and can't be compared reliably, causing spurious \
