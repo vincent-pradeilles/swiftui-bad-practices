@@ -9,41 +9,35 @@ struct ExpensiveInitLesson: View {
             explanation: """
             A view's `init` runs every time its parent re-evaluates `body`, which can \
             be many times per second in lists, scroll containers, or animated parents. \
-            Treat `init` as a cheap copy of inputs: don't decode, allocate formatters, \
-            build formatted strings, or touch the file system there. Pass prepared \
-            values and let SwiftUI format dates at display time with `Text(_:format:)`.
+            Treat `init` as a cheap copy of inputs. If an expensive helper really must \
+            be allocated, move that ownership to stable state, then let the view render \
+            the prepared value.
             """,
             avoidCode: """
-            struct WeatherCard: View {
-                let summary: WeatherSummary
-                let formattedDate: String
+            struct ArticlePreview: View {
+                let preview: AttributedString
 
-                init(rawJSON: Data, date: Date) {
-                    self.summary = try! JSONDecoder()
-                        .decode(WeatherSummary.self, from: rawJSON)
-                    let formatter = DateFormatter()    // allocated every pass
-                    formatter.dateStyle = .medium
-                    self.formattedDate = formatter.string(from: date)
+                init(markdown: String) {
+                    let renderer = MarkdownRenderer()   // allocated every pass
+                    self.preview = renderer.render(markdown)
                 }
 
                 var body: some View {
-                    VStack {
-                        Text(summary.headline)
-                        Text(formattedDate)
-                    }
+                    Text(preview)
                 }
             }
             """,
             preferCode: """
-            struct WeatherCard: View {
-                let headline: String
-                let date: Date
+            struct ArticlePreview: View {
+                let markdown: String
+                @State private var renderer = MarkdownRenderer()
+                @State private var preview = AttributedString()
 
                 var body: some View {
-                    VStack {
-                        Text(headline)
-                        Text(date, format: .dateTime.day().month().year())
-                    }
+                    Text(preview)
+                        .task(id: markdown) {
+                            preview = renderer.render(markdown)
+                        }
                 }
             }
             """
