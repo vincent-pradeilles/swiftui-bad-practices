@@ -3,14 +3,15 @@ import SwiftUI
 struct ViewSectionsLesson: View {
     var body: some View {
         LessonPage(
-            title: "View Sections",
+            title: "Splitting Large Views",
             explanation: """
-            Splitting a body into computed properties looks like factoring, \
-            but they all share the parent's invalidation boundary, so one state \
-            change re-evaluates every section.
+            Splitting a body into computed properties looks like efficient factoring, \
+            but they all still share their View's invalidation boundary. So every state \
+            update will re-evaluate every section.
             
             Separate View structs each get \
-            their own boundary, so only the section whose inputs changed re-runs.
+            their own boundary. So only the section whose inputs actually \
+            changed will be re-evaluated.
             """,
             avoidCode: """
             var body: some View {
@@ -20,13 +21,13 @@ struct ViewSectionsLesson: View {
                 }
             }
             
-            private var header: some View { ... }  // both re-run on every toggle
+            private var header: some View { ... }
             private var details: some View { ... }
             """,
             preferCode: """
             var body: some View {
                 VStack {
-                    ProfileHeader(name: name) // own boundary
+                    ProfileHeader(name: name)
                     ProfileDetails(isExpanded: isExpanded)
                 }
             }
