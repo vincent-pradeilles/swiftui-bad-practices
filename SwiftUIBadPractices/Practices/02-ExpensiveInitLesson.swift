@@ -10,7 +10,7 @@ struct ExpensiveInitLesson: View {
             A view's `init` runs every time its parent re-evaluates `body`, which can \
             be many times per second in lists, scroll containers, or animated parents. \
             Treat `init` as a cheap copy of inputs. If an expensive helper really must \
-            be allocated, move that ownership to stable state, then let the view render \
+            be allocated, move that ownership to `@State`, then let the view render \
             the prepared value.
             """,
             avoidCode: """

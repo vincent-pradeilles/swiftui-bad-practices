@@ -7,15 +7,15 @@ struct SingleChildGroupLesson: View {
         LessonPage(
             title: Self.title,
             explanation: """
-            A Group with exactly one concrete child has no visual effect but \
-            wraps the view in an extra Group<Child> type. 
+            A `Group` with exactly one concrete child has no visual effect but \
+            wraps the view in an extra `Group<Child>` type. 
             
             Every modifier you \
             chain afterwards is type-checked against that wrapper, adding \
             needless compile-time overhead. 
             
-            Drop the Group and chain directly. \
-            (A Group around an if/else or a ForEach is doing real work and is fine.)
+            Drop the `Group` and chain directly. \
+            (A `Group` around an `if`/`else` or a `ForEach` is doing real work and is fine.)
             """,
             avoidCode: """
             Group {

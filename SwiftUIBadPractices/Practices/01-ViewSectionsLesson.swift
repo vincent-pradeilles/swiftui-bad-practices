@@ -7,11 +7,11 @@ struct ViewSectionsLesson: View {
         LessonPage(
             title: Self.title,
             explanation: """
-            Splitting a body into computed properties looks like efficient factoring, \
-            but they all still share their View's invalidation boundary. So every state \
+            Splitting a `body` into computed properties looks like efficient factoring, \
+            but they all still share their `View`'s invalidation boundary. So every state \
             update will re-evaluate every section.
             
-            Separate View structs each get \
+            Separate `View` structs each get \
             their own boundary. So only the section whose inputs actually \
             changed will be re-evaluated.
             """,

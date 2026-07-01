@@ -68,7 +68,7 @@ struct ConditionalModifierLesson: View {
             title: Self.title,
             explanation: """
             A conditional `.if` modifier switches between two view types, so \
-            toggling the condition breaks structural identity: descendant @State \
+            toggling the condition breaks structural identity: descendant `@State` \
             resets and animations become abrupt replacements. Type into each \
             field below, then flip the toggle, and the Avoid field loses its text. \
             Apply the value conditionally with a ternary instead.

@@ -11,7 +11,7 @@ struct ClosureEnvironmentLesson: View {
             compare function values, so every reader in the subtree invalidates \
             on every environment update. Eliminate the closure: hold the data it \
             would capture as stored properties and expose behavior via a method \
-            or callAsFunction. (Framework keys like \\.openURL or \\.dismiss are \
+            or `callAsFunction`. (Framework keys like `\\.openURL` or `\\.dismiss` are \
             designed for this and are fine.)
             """,
             avoidCode: """

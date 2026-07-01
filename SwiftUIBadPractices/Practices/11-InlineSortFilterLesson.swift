@@ -7,10 +7,10 @@ struct InlineSortFilterLesson: View {
         LessonPage(
             title: Self.title,
             explanation: """
-            The collection passed to ForEach is rebuilt every time the enclosing \
-            body runs. Sorting or filtering inline repeats that work on every \
+            The collection passed to `ForEach` is rebuilt every time the enclosing \
+            `body` runs. Sorting or filtering inline repeats that work on every \
             invalidation, even unrelated ones. Cache the derived collection on an \
-            @Observable model and recompute it only when its inputs change.
+            `@Observable` model and recompute it only when its inputs change.
             """,
             avoidCode: """
             ForEach(tasks

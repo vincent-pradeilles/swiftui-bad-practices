@@ -7,11 +7,11 @@ struct UnstableDefaultLesson: View {
         LessonPage(
             title: Self.title,
             explanation: """
-            @Entry wraps its default in a computed getter, so `@Entry var theme = \
+            `@Entry` wraps its default in a computed getter, so `@Entry var theme = \
             Theme()` allocates a new instance on every fallback read. Any \
             environment write makes readers re-read their keys, and the fresh \
             instance reads as "changed", invalidating them. Back the default with \
-            a stable shared instance (or use an Optional nil default).
+            a stable shared instance (or use an `Optional` `nil` default).
             """,
             avoidCode: """
             extension EnvironmentValues {

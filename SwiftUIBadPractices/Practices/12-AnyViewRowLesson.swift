@@ -7,10 +7,10 @@ struct AnyViewRowLesson: View {
         LessonPage(
             title: Self.title,
             explanation: """
-            AnyView erases a view's type, and with it the structural identity List \
-            relies on to template row ids from the type alone. The List then has \
-            to evaluate every row's body to diff, and the cost scales with the row \
-            count. Use a concrete row view with the switch inside a single-root \
+            `AnyView` erases a view's type, and with it the structural identity `List` \
+            relies on to template row ids from the type alone. The `List` then has \
+            to evaluate every row's `body` to diff, and the cost scales with the row \
+            count. Use a concrete row view with the `switch` inside a single-root \
             container instead.
             """,
             avoidCode: """
