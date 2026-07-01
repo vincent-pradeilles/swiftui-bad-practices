@@ -65,8 +65,7 @@ struct LessonPage<AvoidDemo: View, PreferDemo: View>: View {
     /// the exported image matches exactly what's rendered on screen.
     private var lessonContent: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text(explanation)
-                .font(.title3)
+            InlineCodeText(explanation)
 
             LessonExample(
                 label: "Avoid",
@@ -148,6 +147,226 @@ extension LessonPage where AvoidDemo == EmptyView, PreferDemo == EmptyView {
         self.showsDemos = false
         self.avoidDemo = EmptyView()
         self.preferDemo = EmptyView()
+    }
+}
+
+/// Text for lesson explanations, with inline code spans delimited by
+/// backquotes rendered as small inline code chips.
+private struct InlineCodeText: View {
+    private let runs: [InlineCodeRun]
+
+    init(_ source: String) {
+        self.runs = Self.runs(in: source)
+    }
+
+    var body: some View {
+        InlineCodeFlowLayout(verticalSpacing: 0) {
+            ForEach(Array(runs.enumerated()), id: \.offset) { _, run in
+                if run.isLineBreak {
+                    Text(" ")
+                        .font(.title3)
+                        .hidden()
+                        .layoutValue(key: InlineCodeLineBreakKey.self, value: true)
+                } else if run.isCode {
+                    Text(run.string)
+                        .font(.system(.title3, design: .monospaced).weight(.medium))
+                        .foregroundStyle(.primary)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 1)
+                        .background(.primary.opacity(0.07), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
+                } else if run.isSpace {
+                    Text(" ")
+                        .font(.title3)
+                } else {
+                    Text(run.string)
+                        .font(.title3)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private static func runs(in source: String) -> [InlineCodeRun] {
+        var runs: [InlineCodeRun] = []
+        var current = ""
+        var isCode = false
+
+        for character in source {
+            if character == "`" {
+                append(current, isCode: isCode, to: &runs)
+                current.removeAll(keepingCapacity: true)
+                isCode.toggle()
+            } else {
+                current.append(character)
+            }
+        }
+
+        if isCode {
+            append("`" + current, isCode: false, to: &runs)
+        } else {
+            append(current, isCode: false, to: &runs)
+        }
+
+        return runs
+    }
+
+    private static func append(
+        _ string: String,
+        isCode: Bool,
+        to runs: inout [InlineCodeRun]
+    ) {
+        guard !string.isEmpty else { return }
+
+        if isCode {
+            runs.append(InlineCodeRun(string: string, isCode: true))
+        } else {
+            appendPlainText(string, to: &runs)
+        }
+    }
+
+    private static func appendPlainText(_ string: String, to runs: inout [InlineCodeRun]) {
+        var current = ""
+
+        for character in string {
+            if character.isNewline {
+                appendPlainToken(current, to: &runs)
+                current.removeAll(keepingCapacity: true)
+                runs.append(.lineBreak)
+            } else if character.isWhitespace {
+                appendPlainToken(current, to: &runs)
+                current.removeAll(keepingCapacity: true)
+                runs.append(.space)
+            } else {
+                current.append(character)
+            }
+        }
+
+        appendPlainToken(current, to: &runs)
+    }
+
+    private static func appendPlainToken(_ string: String, to runs: inout [InlineCodeRun]) {
+        guard !string.isEmpty else { return }
+        runs.append(InlineCodeRun(string: string, isCode: false))
+    }
+}
+
+private struct InlineCodeRun {
+    let string: String
+    let isCode: Bool
+    var isSpace = false
+    var isLineBreak = false
+
+    static let space = InlineCodeRun(string: " ", isCode: false, isSpace: true)
+    static let lineBreak = InlineCodeRun(string: "", isCode: false, isLineBreak: true)
+}
+
+nonisolated private struct InlineCodeLineBreakKey: LayoutValueKey {
+    static let defaultValue = false
+}
+
+private struct InlineCodeFlowLayout: Layout {
+    let verticalSpacing: CGFloat
+
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) -> CGSize {
+        arrangedSubviews(in: proposal.width, subviews: subviews).size
+    }
+
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) {
+        let arrangement = arrangedSubviews(in: bounds.width, subviews: subviews)
+
+        for placement in arrangement.placements {
+            subviews[placement.index].place(
+                at: CGPoint(
+                    x: bounds.minX + placement.origin.x,
+                    y: bounds.minY + placement.origin.y
+                ),
+                proposal: ProposedViewSize(placement.size)
+            )
+        }
+    }
+
+    private func arrangedSubviews(
+        in proposedWidth: CGFloat?,
+        subviews: Subviews
+    ) -> (placements: [Placement], size: CGSize) {
+        let maxWidth = proposedWidth ?? subviews.reduce(0) { width, subview in
+            width + subview.sizeThatFits(.unspecified).width
+        }
+        var placements: [Placement] = []
+        var line: [Placement] = []
+        var lineWidth: CGFloat = 0
+        var lineHeight: CGFloat = 0
+        var y: CGFloat = 0
+        var totalWidth: CGFloat = 0
+
+        func flushLine(spacingAfter: CGFloat) {
+            guard !line.isEmpty else { return }
+
+            for placement in line {
+                let centeredOrigin = CGPoint(
+                    x: placement.origin.x,
+                    y: y + (lineHeight - placement.size.height) / 2
+                )
+                placements.append(Placement(
+                    index: placement.index,
+                    origin: centeredOrigin,
+                    size: placement.size
+                ))
+            }
+
+            totalWidth = max(totalWidth, lineWidth)
+            y += lineHeight + spacingAfter
+            line.removeAll(keepingCapacity: true)
+            lineWidth = 0
+            lineHeight = 0
+        }
+
+        for index in subviews.indices {
+            let subview = subviews[index]
+
+            if subview[InlineCodeLineBreakKey.self] {
+                if line.isEmpty {
+                    y += subview.sizeThatFits(.unspecified).height
+                } else {
+                    flushLine(spacingAfter: 0)
+                }
+                continue
+            }
+
+            let size = subview.sizeThatFits(.unspecified)
+
+            if !line.isEmpty, lineWidth + size.width > maxWidth {
+                flushLine(spacingAfter: verticalSpacing)
+            }
+
+            let x = lineWidth
+            line.append(Placement(
+                index: index,
+                origin: CGPoint(x: x, y: 0),
+                size: size
+            ))
+            lineWidth = x + size.width
+            lineHeight = max(lineHeight, size.height)
+        }
+
+        flushLine(spacingAfter: 0)
+
+        return (placements, CGSize(width: totalWidth, height: max(y, 0)))
+    }
+
+    private struct Placement {
+        let index: Int
+        let origin: CGPoint
+        let size: CGSize
     }
 }
 
