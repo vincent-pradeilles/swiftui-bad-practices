@@ -7,9 +7,12 @@ struct ExpensiveInitLesson: View {
         LessonPage(
             title: Self.title,
             explanation: """
-            A view's `init` runs every time its parent re-evaluates `body`, which can \
+            A view's `init` runs every time its parent re-evaluates its `body`, which can \
             be many times per second in lists, scroll containers, or animated parents. \
-            Treat `init` as a cheap copy of inputs. If an expensive helper really must \
+            
+            Treat `init` as a cheap copy of inputs. 
+            
+            If an expensive helper really must \
             be allocated, move that ownership to `@State`, then let the view render \
             the prepared value.
             """,
@@ -18,7 +21,7 @@ struct ExpensiveInitLesson: View {
                 let preview: AttributedString
 
                 init(markdown: String) {
-                    let renderer = MarkdownRenderer()   // allocated every pass
+                    let renderer = MarkdownRenderer()
                     self.preview = renderer.render(markdown)
                 }
 
