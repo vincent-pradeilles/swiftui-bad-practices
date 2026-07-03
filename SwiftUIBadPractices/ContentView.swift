@@ -13,7 +13,7 @@ struct SwiftUIBadPracticesApp: App {
 /// selection and selects which detail view to show; each lesson lives in
 /// its own file demonstrating a single SwiftUI bad practice alongside the
 /// recommended alternative.
-enum Lesson: Identifiable, Hashable, CaseIterable {
+enum Lesson: String, Identifiable, Hashable, CaseIterable {
     case viewSections, expensiveInit, singleChildGroup
     case narrowInputs, equatableModel, closureBinding
     case closureEnvironment, unstableDefault
@@ -79,11 +79,21 @@ struct LessonSection: Identifiable {
 /// lesson shown in the detail pane — the idiomatic split-view layout for a
 /// Mac app.
 struct ContentView: View {
-    @State private var selection: Lesson? = .viewSections
+    /// The last opened lesson, persisted so the app reopens on it. Stored as
+    /// the lesson's raw value; a computed binding maps it to the `Lesson?`
+    /// that the sidebar's `List` selection expects.
+    @AppStorage("lastOpenLesson") private var lastOpenLesson = Lesson.viewSections.rawValue
+
+    private var selection: Binding<Lesson?> {
+        Binding(
+            get: { Lesson(rawValue: lastOpenLesson) },
+            set: { if let lesson = $0 { lastOpenLesson = lesson.rawValue } }
+        )
+    }
 
     var body: some View {
         NavigationSplitView {
-            List(selection: $selection) {
+            List(selection: selection) {
                 ForEach(LessonSection.all) { section in
                     Section(section.title) {
                         ForEach(section.lessons) { lesson in
@@ -94,7 +104,7 @@ struct ContentView: View {
             }
             .navigationTitle("Bad Practices")
         } detail: {
-            if let selection {
+            if let selection = selection.wrappedValue {
                 NavigationStack {
                     selection.detail
                 }
