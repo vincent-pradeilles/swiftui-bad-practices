@@ -8,7 +8,7 @@ struct EquatableModelLesson: View {
             title: Self.title,
             explanation: """
             The `@Observable` macro generates property setters that skip invalidation \
-            when the new value equals the current one, but only if its type is \
+            when the new value equals the current one, but only if the type is \
             `Equatable`. 
             
             Without that conformance, every assignment notifies \
@@ -25,10 +25,10 @@ struct EquatableModelLesson: View {
 
             @Observable @MainActor
             final class LocationModel {
+                // GPS updates ~1/s and each update notifies the view
                 var coordinate = Coordinate(latitude: 0, longitude: 0)
             }
 
-            // GPS updates ~1/s and each update notifies the view
             """,
             preferCode: """
             struct Coordinate: Equatable {
@@ -38,10 +38,9 @@ struct EquatableModelLesson: View {
 
             @Observable @MainActor
             final class LocationModel {
+                // skips identical updates, notifies only on real movement
                 var coordinate = Coordinate(latitude: 0, longitude: 0)
             }
-
-            // skips identical updates, notifies only on real movement
             """
         )
     }
