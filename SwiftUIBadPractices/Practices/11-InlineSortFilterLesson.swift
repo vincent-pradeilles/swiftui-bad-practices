@@ -1,29 +1,45 @@
 import SwiftUI
 
 struct InlineSortFilterLesson: View {
-    static let title = "Inline Sort & Filter"
+    static let title = "Expensive Inline Work in ForEach"
 
     var body: some View {
         LessonPage(
             title: Self.title,
             explanation: """
-            The collection passed to `ForEach` is rebuilt every time the enclosing \
-            `body` runs. Sorting or filtering inline repeats that work on every \
-            invalidation, even unrelated ones. Cache the derived collection on an \
-            `@Observable` model and recompute it only when its inputs change.
+            The `Collection` passed to `ForEach` is rebuilt every time the enclosing \
+            `body` runs. 
+            
+            Sorting or filtering inline repeats that work on every \
+            invalidation, even when the `Collection` hasn't changed.
+            
+            Caching the derived `Collection` in an \
+            `@Observable` model lets you perform that work \
+            only when it is actually necessary.
             """,
             avoidCode: """
-            ForEach(tasks
-                .filter { ... }
-                .sorted()
-            ) { task in Text(task) }   // re-runs on every body pass
+            ForEach(contacts
+                .filter { $0.name.contains(query) }
+                .sorted { $0.name < $1.name }
+            ) { contact in ContactRow(contact) }
             """,
             preferCode: """
-            var tasks: [String] { didSet { recompute() } }
-            var query: String { didSet { recompute() } }
-            private(set) var visible: [String] = []
+            @Observable @MainActor
+            final class ContactsModel {
+                var contacts: [Contact] = [] { didSet { search() } }
+                var query: String = "" { didSet { search() } }
 
-            ForEach(model.visible) { task in Text(task) }
+                // recomputed only when contacts or query change
+                private(set) var results: [Contact] = []
+
+                private func search() {
+                    results = contacts
+                        .filter { $0.name.contains(query) }
+                        .sorted { $0.name < $1.name }
+                }
+            }
+
+            ForEach(model.results) { contact in ContactRow(contact) }
             """
         )
     }
