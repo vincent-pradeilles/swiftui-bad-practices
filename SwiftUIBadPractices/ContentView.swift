@@ -18,7 +18,7 @@ enum Lesson: String, Identifiable, Hashable, CaseIterable {
     case narrowInputs, equatableModel, closureBinding
     case closureEnvironment, unstableDefault
     case conditionalModifier
-    case indicesIdentity, inlineSortFilter, anyViewRow
+    case indicesIdentity, inlineSortFilter, branchingRow
 
     var id: Self { self }
 
@@ -37,7 +37,7 @@ enum Lesson: String, Identifiable, Hashable, CaseIterable {
         case .conditionalModifier: ConditionalModifierLesson.title
         case .indicesIdentity: IndicesIdentityLesson.title
         case .inlineSortFilter: InlineSortFilterLesson.title
-        case .anyViewRow: AnyViewRowLesson.title
+        case .branchingRow: BranchingRowLesson.title
         }
     }
 
@@ -54,7 +54,7 @@ enum Lesson: String, Identifiable, Hashable, CaseIterable {
         case .conditionalModifier: ConditionalModifierLesson()
         case .indicesIdentity: IndicesIdentityLesson()
         case .inlineSortFilter: InlineSortFilterLesson()
-        case .anyViewRow: AnyViewRowLesson()
+        case .branchingRow: BranchingRowLesson()
         }
     }
 }
@@ -71,7 +71,7 @@ struct LessonSection: Identifiable {
         LessonSection(title: "Data Flow", lessons: [.narrowInputs, .equatableModel, .closureBinding]),
         LessonSection(title: "Environment", lessons: [.closureEnvironment, .unstableDefault]),
         LessonSection(title: "Modifiers", lessons: [.conditionalModifier]),
-        LessonSection(title: "ForEach & List", lessons: [.indicesIdentity, .inlineSortFilter, .anyViewRow])
+        LessonSection(title: "ForEach & List", lessons: [.indicesIdentity, .inlineSortFilter, .branchingRow])
     ]
 }
 
