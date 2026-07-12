@@ -7,10 +7,16 @@ struct ClosureBindingLesson: View {
         LessonPage(
             title: Self.title,
             explanation: """
-            A get/set closure `Binding` is a fresh heap allocation on every `body` \
-            evaluation and can't be compared reliably, causing spurious \
-            invalidations. Project into the model through a subscript and derive \
-            the `Binding` with `@Bindable` instead.
+            Building a `Binding` from get/set closures allocates a new pair of \
+            closures every time `body` runs.
+
+            SwiftUI can't compare closures, so it can't tell the binding is \
+            still the same one as last time. It re-runs the child view even \
+            when nothing actually changed.
+
+            Add a subscript to the model and let `@Bindable` derive the binding \
+            through it. That binding is a stable key path SwiftUI can compare, \
+            so it skips the wasted work.
             """,
             avoidCode: """
             let binding = Binding(
