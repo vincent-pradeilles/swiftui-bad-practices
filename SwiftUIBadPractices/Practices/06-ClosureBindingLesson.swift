@@ -8,9 +8,9 @@ struct ClosureBindingLesson: View {
             title: Self.title,
             explanation: """
             Building a `Binding` from get/set closures allocates a new pair of \
-            closures every time `body` runs.
+            closures every time the `body` is evaluated.
 
-            SwiftUI can't compare closures, so it can't tell the binding is \
+            SwiftUI can't compare closures, so it can't tell whether the binding is \
             still the same one as last time. It re-runs the child view even \
             when nothing actually changed.
 

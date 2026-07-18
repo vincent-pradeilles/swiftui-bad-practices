@@ -14,8 +14,9 @@ struct SingleChildGroupLesson: View {
             chain afterwards is type-checked against that wrapper, adding \
             needless compile-time overhead. 
             
-            Drop the `Group` and chain directly. \
-            (A `Group` around an `if`/`else` or a `ForEach` is doing real work and is fine.)
+            Drop the `Group` and chain directly.
+            
+            (However, a `Group` around an `if`/`else` or a `ForEach` is doing real work and is fine.)
             """,
             avoidCode: """
             Group {
